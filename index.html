@@ -1,0 +1,1422 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover"
+    />
+    <title>E-Karya Mahasiswa Jurusan Matematika (Mode Uji Coba)</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family:
+          system-ui,
+          -apple-system,
+          "Segoe UI",
+          Roboto,
+          sans-serif;
+      }
+      body {
+        background-color: #fff7ed;
+        overflow-x: hidden;
+      }
+      .login-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        z-index: 2000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .login-card {
+        background: white;
+        padding: 32px 24px;
+        border-radius: 32px;
+        width: 90%;
+        max-width: 340px;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      }
+      .login-card h2 {
+        margin-bottom: 8px;
+        color: #333;
+      }
+      .login-card .sub {
+        color: #666;
+        font-size: 13px;
+        margin-bottom: 24px;
+      }
+      .login-input {
+        width: 100%;
+        padding: 14px 16px;
+        margin: 10px 0;
+        border: 1px solid #ddd;
+        border-radius: 40px;
+        font-size: 14px;
+        outline: none;
+      }
+      .login-input:focus {
+        border-color: #f97316;
+      }
+      .login-btn {
+        width: 100%;
+        padding: 14px;
+        background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        color: white;
+        border: none;
+        border-radius: 40px;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 16px;
+        cursor: pointer;
+      }
+      .error-msg,
+      .success-msg {
+        font-size: 12px;
+        margin-top: 12px;
+        display: none;
+      }
+      .error-msg {
+        color: #e53e3e;
+      }
+      .success-msg {
+        color: #166534;
+      }
+      .toggle-form {
+        margin-top: 16px;
+        font-size: 12px;
+        color: #f97316;
+        cursor: pointer;
+      }
+      .info-nim {
+        font-size: 11px;
+        color: #666;
+        margin-top: 16px;
+        background: #fff7ed;
+        padding: 8px;
+        border-radius: 12px;
+      }
+      .main-app {
+        display: none;
+        max-width: 100%;
+        margin: 0 auto;
+        background: #fff7ed;
+        min-height: 100vh;
+      }
+      .page {
+        display: none;
+        min-height: 100vh;
+      }
+      .page.active {
+        display: block;
+      }
+      .product-page {
+        background: #fff7ed;
+        min-height: 100vh;
+        padding: 16px 12px;
+        padding-bottom: 80px;
+      }
+      .search-bar {
+        background: white;
+        border-radius: 40px;
+        padding: 10px 16px;
+        margin-bottom: 20px;
+        display: flex;
+        gap: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        border: 1px solid #fed7aa;
+      }
+      .search-bar input {
+        flex: 1;
+        border: none;
+        outline: none;
+        font-size: 14px;
+        background: transparent;
+      }
+      .search-bar button {
+        background: #f97316;
+        border: none;
+        color: white;
+        padding: 6px 20px;
+        border-radius: 40px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .product-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+      .product-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: 0.2s;
+      }
+      .product-image {
+        background-color: #fef3c7;
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .product-image img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .product-info {
+        padding: 10px 8px 12px;
+      }
+      .product-title {
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .price-row {
+        margin: 8px 0 4px;
+      }
+      .current-price {
+        font-size: 16px;
+        font-weight: 700;
+        color: #d32f2f;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #999;
+        grid-column: 1/-1;
+      }
+      .video-page {
+        height: 100vh;
+        overflow-y: scroll;
+        scroll-snap-type: y mandatory;
+        background: #000;
+      }
+      .video-container {
+        height: 100vh;
+        scroll-snap-align: start;
+        position: relative;
+        background: #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .video-container video {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+      }
+      .video-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+        padding: 20px;
+        color: white;
+      }
+      .video-title-overlay {
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .video-actions {
+        display: flex;
+        gap: 20px;
+        margin: 10px 0;
+      }
+      .action-btn {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        padding: 6px 16px;
+        border-radius: 40px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        border: none;
+        color: white;
+      }
+      .action-btn.liked {
+        color: #f43f5e;
+        background: rgba(255, 255, 255, 0.3);
+      }
+      .comments-section {
+        margin-top: 10px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 16px;
+        padding: 10px;
+        max-height: 150px;
+        overflow-y: auto;
+      }
+      .comment-item {
+        font-size: 12px;
+        margin-bottom: 6px;
+        border-bottom: 0.5px solid #444;
+        padding-bottom: 4px;
+      }
+      .comment-input-area {
+        display: flex;
+        gap: 8px;
+        margin-top: 8px;
+      }
+      .comment-input-area input {
+        flex: 1;
+        padding: 8px;
+        border-radius: 40px;
+        border: none;
+        font-size: 12px;
+      }
+      .comment-input-area button {
+        background: #f97316;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 40px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .empty-video {
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        color: white;
+        text-align: center;
+      }
+      .account-page {
+        background: #fff7ed;
+        min-height: 100vh;
+        padding: 16px;
+        padding-bottom: 80px;
+      }
+      .profile-card,
+      .upload-section {
+        background: white;
+        border-radius: 24px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .profile-card {
+        text-align: center;
+      }
+      .avatar {
+        font-size: 64px;
+        margin-bottom: 12px;
+      }
+      .nim-text {
+        background: #fff3e6;
+        padding: 10px;
+        border-radius: 40px;
+        font-family: monospace;
+        margin: 12px 0;
+      }
+      .role-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: bold;
+        background: #fed7aa;
+        color: #9a3412;
+      }
+      .upload-section h4 {
+        margin-bottom: 12px;
+        color: #431407;
+      }
+      .upload-area {
+        border: 2px dashed #fed7aa;
+        border-radius: 16px;
+        padding: 20px;
+        text-align: center;
+        cursor: pointer;
+        background: #fffbeb;
+        margin-bottom: 12px;
+      }
+      .upload-area:hover {
+        border-color: #f97316;
+        background: #fff7ed;
+      }
+      .form-input,
+      .form-textarea {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #fed7aa;
+        border-radius: 12px;
+        font-size: 14px;
+      }
+      .upload-btn {
+        background: #f97316;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 40px;
+        cursor: pointer;
+        font-weight: 600;
+        width: 100%;
+        margin-top: 8px;
+      }
+      .delete-btn {
+        background: #e53e3e;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size: 12px;
+      }
+      .logout-btn,
+      .reset-btn {
+        width: 100%;
+        padding: 12px;
+        border-radius: 40px;
+        font-weight: bold;
+        margin-top: 10px;
+        cursor: pointer;
+        border: none;
+      }
+      .logout-btn {
+        background: #e53e3e;
+        color: white;
+      }
+      .reset-btn {
+        background: #ff9800;
+        color: white;
+      }
+      .user-list {
+        max-height: 250px;
+        overflow-y: auto;
+        background: #fffbeb;
+        border-radius: 16px;
+        padding: 12px;
+        border: 1px solid #fed7aa;
+      }
+      .user-item {
+        padding: 10px;
+        border-bottom: 1px solid #ffe0b5;
+        font-size: 13px;
+      }
+      .carousel-container {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+        border-radius: 16px;
+        aspect-ratio: 1/1;
+        touch-action: pan-y;
+      }
+      .carousel-track {
+        display: flex;
+        transition: transform 0.3s ease;
+        height: 100%;
+      }
+      .carousel-slide {
+        min-width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #fef3c7;
+      }
+      .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .carousel-dots {
+        display: flex;
+        justify-content: center;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #ccc;
+        cursor: pointer;
+      }
+      .dot.active {
+        background: #f97316;
+        width: 20px;
+        border-radius: 4px;
+      }
+      .variant-info {
+        background: #fff3e6;
+        padding: 12px;
+        border-radius: 16px;
+        margin: 12px 0;
+      }
+      .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(255, 245, 235, 0.96);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 20px 20px;
+        border-top: 1px solid #fed7aa;
+        z-index: 100;
+      }
+      .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        background: none;
+        border: none;
+        font-size: 12px;
+        color: #9a3412;
+        cursor: pointer;
+      }
+      .nav-item.active {
+        color: #ea580c;
+        font-weight: bold;
+      }
+      .nav-item span:first-child {
+        font-size: 24px;
+      }
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+        overflow-y: auto;
+        padding: 20px;
+      }
+      .modal-content {
+        max-width: 500px;
+        margin: 20px auto;
+        background: white;
+        border-radius: 28px;
+        overflow: hidden;
+      }
+      .modal-header {
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        border-bottom: 1px solid #eee;
+      }
+      .close-modal {
+        font-size: 28px;
+        cursor: pointer;
+        background: none;
+        border: none;
+      }
+      .contact-wa {
+        display: block;
+        background: #25d366;
+        color: white;
+        padding: 12px;
+        text-align: center;
+        border-radius: 40px;
+        text-decoration: none;
+        margin: 10px 0;
+        font-weight: bold;
+      }
+      .add-variant-btn {
+        background: #fff3e6;
+        border: 1px dashed #f97316;
+        padding: 10px;
+        border-radius: 12px;
+        text-align: center;
+        cursor: pointer;
+        margin-top: 12px;
+        font-size: 13px;
+      }
+      .warning-badge {
+        background: #ff9800;
+        color: white;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 10px;
+        margin-left: 8px;
+      }
+      .toast-notif {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 40px;
+        font-size: 14px;
+        z-index: 1500;
+        animation: fadeOut 2s ease forwards;
+        pointer-events: none;
+      }
+      @keyframes fadeOut {
+        0% {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+        70% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-50%) translateY(-20px);
+          visibility: hidden;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loginOverlay" class="login-overlay">
+      <div class="login-card">
+        <h2>🏫 E-Karya<span class="warning-badge">Mode Uji Coba</span></h2>
+        <div class="sub" id="formTitle">Login</div>
+        <input
+          type="text"
+          id="nimInput"
+          class="login-input"
+          placeholder="Masukkan NIM (12 digit)"
+          autocomplete="off"
+        />
+        <input
+          type="password"
+          id="passwordInput"
+          class="login-input"
+          placeholder="Password"
+        />
+        <input
+          type="text"
+          id="nameInput"
+          class="login-input"
+          placeholder="Nama Lengkap"
+          style="display: none"
+        />
+        <button class="login-btn" id="actionBtn">Login</button>
+        <div id="loginError" class="error-msg"></div>
+        <div id="loginSuccess" class="success-msg"></div>
+        <div class="toggle-form" id="toggleText">
+          Belum punya akun? Register
+        </div>
+        <div class="info-nim">
+          📌 Mode Uji Coba: NIM 12 digit. Hanya pemilik akun bisa hapus
+          produk/video miliknya. Like & komentar tersimpan.
+        </div>
+      </div>
+    </div>
+
+    <div id="mainApp" class="main-app">
+      <div id="pageProduk" class="page active">
+        <div class="product-page">
+          <div class="search-bar">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="🔍 Cari produk berdasarkan nama..."
+            />
+            <button onclick="filterProducts()">Cari</button>
+          </div>
+          <div id="productGrid" class="product-grid"></div>
+        </div>
+      </div>
+      <div id="pageVideo" class="page">
+        <div id="videoFeed" class="video-page"></div>
+      </div>
+      <div id="pageAkun" class="page">
+        <div class="account-page">
+          <div class="profile-card">
+            <div class="avatar" id="profileAvatar">👨‍🎓</div>
+            <h3 id="profileName">Mahasiswa</h3>
+            <div class="nim-text" id="profileNim">NIM: -</div>
+            <div id="profileRole"></div>
+            <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+            <button class="reset-btn" onclick="clearAllData()">
+              🗑️ Reset Semua Data Uji Coba
+            </button>
+          </div>
+          <div class="upload-section">
+            <h4>🔑 Ubah Password</h4>
+            <input
+              type="password"
+              id="newPassword"
+              class="form-input"
+              placeholder="Password Baru"
+            />
+            <input
+              type="password"
+              id="confirmPassword"
+              class="form-input"
+              placeholder="Konfirmasi"
+            />
+            <button class="upload-btn" onclick="changePassword()">
+              Simpan
+            </button>
+          </div>
+          <div class="upload-section">
+            <h4>📦 Upload Produk (Multi Varian)</h4>
+            <input
+              type="text"
+              id="productName"
+              class="form-input"
+              placeholder="Nama Produk"
+            />
+            <textarea
+              id="productDesc"
+              class="form-textarea"
+              rows="2"
+              placeholder="Deskripsi"
+            ></textarea>
+            <input
+              type="text"
+              id="productWa"
+              class="form-input"
+              placeholder="WhatsApp (contoh: 6281234567890)"
+            />
+            <div id="variantsContainer">
+              <h5 style="margin: 12px 0 8px">📸 Varian</h5>
+              <div class="variant-item" data-index="0">
+                <div
+                  class="upload-area variant-upload"
+                  data-index="0"
+                  style="padding: 12px"
+                >
+                  <span>🖼️</span>
+                  <p>Klik gambar varian 1</p>
+                </div>
+                <input
+                  type="number"
+                  class="form-input variant-price"
+                  placeholder="Harga varian 1 (Rp)"
+                />
+              </div>
+            </div>
+            <div class="add-variant-btn" onclick="addVariant()">
+              + Tambah Varian
+            </div>
+            <button class="upload-btn" onclick="uploadProductWithVariants()">
+              ✅ Tambah Produk
+            </button>
+          </div>
+          <div class="upload-section">
+            <h4>📹 Upload Video (Reels)</h4>
+            <div class="upload-area" id="uploadVideoArea">
+              <span>🎥</span>
+              <p>Klik pilih video (max 50MB)</p>
+            </div>
+            <input
+              type="text"
+              id="videoTitle"
+              class="form-input"
+              placeholder="Judul Video"
+            />
+            <button class="upload-btn" onclick="uploadVideo()">
+              📤 Upload Video
+            </button>
+            <div
+              id="videoUploadStatus"
+              style="font-size: 12px; margin-top: 8px; color: #f97316"
+            ></div>
+          </div>
+          <div class="upload-section">
+            <h4 id="userListTitle">👥 Pengguna Terdaftar (0)</h4>
+            <div id="userListContainer" class="user-list"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bottom-nav">
+        <button class="nav-item active" onclick="switchPage('produk')">
+          <span>🏠</span><span>Etalase</span>
+        </button>
+        <button class="nav-item" onclick="switchPage('video')">
+          <span>📱</span><span>Reels</span>
+        </button>
+        <button class="nav-item" onclick="switchPage('akun')">
+          <span>👤</span><span>Akun</span>
+        </button>
+      </div>
+    </div>
+
+    <div id="productModal" class="modal">
+      <div class="modal-content" id="modalContent"></div>
+    </div>
+
+    <script>
+      // ==================== SISTEM DASAR ====================
+      let isLoginMode = true;
+      let variantCounter = 1;
+      let currentSearchQuery = "";
+      let globalProducts = [];
+      let globalVideos = [];
+      let selectedVideoFile = null;
+
+      function showNotif(msg, isError = false) {
+        const toast = document.createElement("div");
+        toast.className = "toast-notif";
+        toast.style.background = isError ? "#e53e3e" : "#166534";
+        toast.innerText = msg;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 2000);
+      }
+
+      function getUsers() {
+        return JSON.parse(localStorage.getItem("simarket_users") || "{}");
+      }
+      function saveUsers(users) {
+        localStorage.setItem("simarket_users", JSON.stringify(users));
+        renderUserList();
+      }
+      function renderUserList() {
+        const users = getUsers();
+        const container = document.getElementById("userListContainer");
+        if (!container) return;
+        const list = Object.values(users);
+        container.innerHTML = list.length
+          ? list
+              .map(
+                (u) =>
+                  `<div class="user-item"><strong>${escapeHtml(u.name)}</strong><br><span style="font-size:11px;">NIM: ${u.nim}</span><span style="font-size:10px; margin-left:8px;">📅 ${u.registeredAt || ""}</span></div>`,
+              )
+              .join("")
+          : '<div style="text-align:center;color:#999;">Belum ada pengguna</div>';
+        const cnt = Object.keys(users).length;
+        if (document.getElementById("userListTitle"))
+          document.getElementById("userListTitle").innerText =
+            `👥 Pengguna Terdaftar (${cnt})`;
+      }
+
+      function getSession() {
+        const s = localStorage.getItem("simarket_session");
+        return s ? JSON.parse(s) : null;
+      }
+      function saveSession(s) {
+        localStorage.setItem("simarket_session", JSON.stringify(s));
+      }
+
+      // Data terpisah per user
+      function getProducts(nim) {
+        return JSON.parse(
+          localStorage.getItem(`simarket_products_${nim}`) || "[]",
+        );
+      }
+      function saveProducts(nim, prods) {
+        localStorage.setItem(`simarket_products_${nim}`, JSON.stringify(prods));
+      }
+      function getVideos(nim) {
+        return JSON.parse(
+          localStorage.getItem(`simarket_videos_${nim}`) || "[]",
+        );
+      }
+      function saveVideos(nim, vids) {
+        localStorage.setItem(`simarket_videos_${nim}`, JSON.stringify(vids));
+      }
+
+      function loadAllData() {
+        const session = getSession();
+        if (session) {
+          globalProducts = getProducts(session.nim);
+          globalVideos = getVideos(session.nim);
+        } else {
+          globalProducts = [];
+          globalVideos = [];
+        }
+      }
+
+      function refreshUI() {
+        loadAllData();
+        renderProducts();
+        renderVideos();
+      }
+
+      // ==================== PRODUK & PENCARIAN ====================
+      function filterProducts() {
+        const input = document.getElementById("searchInput");
+        currentSearchQuery = input.value.trim().toLowerCase();
+        renderProducts();
+      }
+
+      function renderProducts() {
+        const grid = document.getElementById("productGrid");
+        if (!grid) return;
+        let filtered = globalProducts;
+        if (currentSearchQuery)
+          filtered = globalProducts.filter((p) =>
+            p.name.toLowerCase().includes(currentSearchQuery),
+          );
+        if (filtered.length === 0) {
+          grid.innerHTML = `<div class="empty-state"><span>🔍</span><h3>Produk tidak ditemukan</h3><p>Coba kata kunci lain atau upload produk</p></div>`;
+          return;
+        }
+        grid.innerHTML = filtered
+          .map(
+            (p) => `
+            <div class="product-card" onclick="openProductModal(${p.id})">
+                <div class="product-image"><img src="${p.variants[0].image}" alt="${escapeHtml(p.name)}"></div>
+                <div class="product-info">
+                    <div class="product-title">${escapeHtml(p.name)}</div>
+                    <div class="price-row"><span class="current-price">${formatRupiah(p.variants[0].price)}</span></div>
+                    <div style="font-size:11px;">${p.variants.length} varian</div>
+                </div>
+            </div>
+        `,
+          )
+          .join("");
+      }
+
+      function openProductModal(pid) {
+        const p = globalProducts.find((pr) => pr.id === pid);
+        if (!p) return;
+        const session = getSession();
+        const isOwner = session && session.nim === p.ownerNim;
+        let currentIdx = 0;
+
+        function buildModal(idx) {
+          const v = p.variants[idx];
+          const modalContent = document.getElementById("modalContent");
+          modalContent.innerHTML = `
+                <div class="modal-header"><h3>${escapeHtml(p.name)}</h3><button class="close-modal" onclick="closeModal()">&times;</button></div>
+                <div class="modal-body">
+                    <div class="carousel-container" id="carouselContainer"><div class="carousel-track" id="carouselTrack">${p.variants.map((vx, i) => `<div class="carousel-slide"><img src="${vx.image}" alt="varian ${i + 1}"></div>`).join("")}</div></div>
+                    <div class="carousel-dots" id="carouselDots">${p.variants.map((_, i) => `<div class="dot ${i === idx ? "active" : ""}" onclick="goToVariant(${p.id}, ${i})"></div>`).join("")}</div>
+                    <div class="variant-info"><div style="font-size:24px;color:#d32f2f;">${formatRupiah(v.price)}</div><div>Varian ${idx + 1} dari ${p.variants.length}</div></div>
+                    <div><strong>📝 Deskripsi:</strong><br>${escapeHtml(p.desc || "-")}</div>
+                    <a href="https://wa.me/${p.wa}?text=Halo%2C%20saya%20tertarik%20${encodeURIComponent(p.name)}%20(Varian%20${idx + 1})" class="contact-wa" target="_blank">💬 Hubungi Penjual via WhatsApp</a>
+                    ${isOwner ? `<button class="delete-btn" style="width:100%;margin-top:12px;" onclick="deleteProduct(${p.id})">🗑️ Hapus Produk (milik saya)</button>` : ""}
+                    <button class="logout-btn" style="background:#999;margin-top:10px;" onclick="closeModal()">Tutup</button>
+                </div>
+            `;
+          const track = document.getElementById("carouselTrack");
+          if (track) track.style.transform = `translateX(-${idx * 100}%)`;
+          setupCarouselSwipe(p.id, p.variants.length);
+        }
+        window.goToVariant = function (pid, idx) {
+          if (globalProducts.find((pr) => pr.id === pid)) buildModal(idx);
+        };
+        buildModal(currentIdx);
+        document.getElementById("productModal").style.display = "block";
+        document.body.style.overflow = "hidden";
+      }
+
+      function setupCarouselSwipe(pid, total) {
+        let startX = 0;
+        const container = document.getElementById("carouselContainer");
+        const track = document.getElementById("carouselTrack");
+        if (!container || !track) return;
+        const getIdx = () => {
+          const m = track.style.transform.match(/translateX\(-([0-9]+)%/);
+          return m ? parseInt(m[1]) / 100 : 0;
+        };
+        const handleStart = (e) => {
+          startX = e.touches[0].clientX;
+        };
+        const handleEnd = (e) => {
+          const diff = startX - e.changedTouches[0].clientX;
+          let idx = getIdx();
+          if (Math.abs(diff) > 50) {
+            if (diff > 0 && idx < total - 1) idx++;
+            else if (diff < 0 && idx > 0) idx--;
+            window.goToVariant(pid, idx);
+          }
+        };
+        container.removeEventListener("touchstart", handleStart);
+        container.removeEventListener("touchend", handleEnd);
+        container.addEventListener("touchstart", handleStart);
+        container.addEventListener("touchend", handleEnd);
+      }
+
+      function deleteProduct(id) {
+        const session = getSession();
+        if (!session) return;
+        const prod = globalProducts.find((p) => p.id === id);
+        if (
+          prod &&
+          prod.ownerNim === session.nim &&
+          confirm("Hapus produk ini?")
+        ) {
+          const newProds = globalProducts.filter((p) => p.id !== id);
+          saveProducts(session.nim, newProds);
+          refreshUI();
+          closeModal();
+          showNotif("Produk berhasil dihapus", false);
+        } else alert("Anda tidak berhak menghapus produk milik orang lain!");
+      }
+
+      // ==================== VARIAN PRODUK ====================
+      function addVariant() {
+        const container = document.getElementById("variantsContainer");
+        const idx = variantCounter;
+        const div = document.createElement("div");
+        div.className = "variant-item";
+        div.setAttribute("data-index", idx);
+        div.innerHTML = `
+            <div class="upload-area variant-upload" data-index="${idx}" style="padding:12px;margin-top:12px;"><span>🖼️</span><p>Klik gambar varian ${idx + 1}</p></div>
+            <input type="number" class="form-input variant-price" placeholder="Harga varian ${idx + 1} (Rp)">
+            <button class="delete-btn" style="margin-top:4px;" onclick="this.parentElement.remove()">Hapus Varian</button>
+        `;
+        container.appendChild(div);
+        setupVariantUpload(div.querySelector(".variant-upload"), idx);
+        variantCounter++;
+      }
+
+      function setupVariantUpload(uploadArea, idx) {
+        uploadArea.onclick = (e) => {
+          e.stopPropagation();
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "image/*";
+          input.onchange = (ev) => {
+            if (ev.target.files && ev.target.files[0]) {
+              const file = ev.target.files[0];
+              if (file.size > 2 * 1024 * 1024) {
+                showNotif("Gambar maksimal 2MB!", true);
+                return;
+              }
+              const reader = new FileReader();
+              reader.onload = (re) => {
+                uploadArea.innerHTML = `<span>✅</span><p>Gambar varian ${idx + 1} siap</p><img src="${re.target.result}" style="width:60px;height:60px;object-fit:cover;border-radius:8px;">`;
+                uploadArea.setAttribute("data-base64", re.target.result);
+                setupVariantUpload(uploadArea, idx);
+              };
+              reader.readAsDataURL(file);
+            }
+          };
+          input.click();
+        };
+      }
+
+      function uploadProductWithVariants() {
+        const session = getSession();
+        if (!session) return;
+        const name = document.getElementById("productName").value.trim();
+        const desc = document.getElementById("productDesc").value.trim();
+        const wa = document.getElementById("productWa").value.trim();
+        if (!name) return showNotif("Nama produk harus diisi!", true);
+        if (!wa.match(/^62\d{8,13}$/))
+          return showNotif("WA harus diawali 62 (contoh: 6281234567890)", true);
+        const variants = [];
+        const items = document.querySelectorAll(".variant-item");
+        if (items.length === 0) return showNotif("Minimal 1 varian", true);
+        for (let i = 0; i < items.length; i++) {
+          const upl = items[i].querySelector(".variant-upload");
+          const priceInp = items[i].querySelector(".variant-price");
+          const imgBase64 = upl.getAttribute("data-base64");
+          const price = parseInt(priceInp.value);
+          if (!imgBase64)
+            return showNotif(`Varian ${i + 1} belum punya gambar!`, true);
+          if (!price || price <= 0)
+            return showNotif(`Harga varian ${i + 1} tidak valid!`, true);
+          variants.push({ id: i, image: imgBase64, price: price });
+        }
+        const newProduct = {
+          id: Date.now(),
+          name,
+          desc,
+          wa,
+          variants,
+          ownerNim: session.nim,
+          createdAt: new Date().toLocaleString(),
+        };
+        const updated = [newProduct, ...getProducts(session.nim)];
+        saveProducts(session.nim, updated);
+        refreshUI();
+        document.getElementById("productName").value = "";
+        document.getElementById("productDesc").value = "";
+        document.getElementById("productWa").value = "";
+        document.getElementById("variantsContainer").innerHTML = `
+            <h5 style="margin:12px 0 8px;">📸 Varian</h5>
+            <div class="variant-item" data-index="0">
+                <div class="upload-area variant-upload" data-index="0" style="padding:12px;"><span>🖼️</span><p>Klik gambar varian 1</p></div>
+                <input type="number" class="form-input variant-price" placeholder="Harga varian 1 (Rp)">
+            </div>
+        `;
+        variantCounter = 1;
+        const fu = document.querySelector(".variant-upload");
+        if (fu) setupVariantUpload(fu, 0);
+        showNotif("✅ Produk berhasil diupload!");
+        switchPage("produk");
+      }
+
+      // ==================== VIDEO DENGAN NOTIF ====================
+      function renderVideos() {
+        const feed = document.getElementById("videoFeed");
+        if (!feed) return;
+        if (globalVideos.length === 0) {
+          feed.innerHTML = `<div class="empty-video"><span>📹</span><h3>Belum Ada Video</h3><p>Upload video di halaman Akun</p></div>`;
+          return;
+        }
+        const session = getSession();
+        feed.innerHTML = globalVideos
+          .map((v) => {
+            const isLiked = session && v.likes && v.likes.includes(session.nim);
+            const likeCount = v.likes ? v.likes.length : 0;
+            const commentCount = v.comments ? v.comments.length : 0;
+            const isOwner = session && session.nim === v.ownerNim;
+            return `
+                <div class="video-container" id="vc-${v.id}">
+                    <video id="video-${v.id}" src="${v.videoBase64}" loop muted playsinline></video>
+                    <div class="video-overlay">
+                        <div class="video-title-overlay">
+                            <span>🎬 ${escapeHtml(v.title)}</span>
+                            ${isOwner ? `<button class="delete-btn" style="background:#e53e3e;padding:4px 12px;" onclick="event.stopPropagation(); deleteVideo(${v.id})">🗑️ Hapus</button>` : ""}
+                        </div>
+                        <div class="video-actions">
+                            <button class="action-btn ${isLiked ? "liked" : ""}" onclick="toggleLike(${v.id})">❤️ ${likeCount}</button>
+                            <button class="action-btn" onclick="toggleComments(${v.id})">💬 ${commentCount}</button>
+                        </div>
+                        <div id="comments-panel-${v.id}" style="display:none;">
+                            <div class="comments-section" id="comments-list-${v.id}">
+                                ${(v.comments || []).map((c) => `<div class="comment-item"><b>${escapeHtml(c.name)}</b>: ${escapeHtml(c.text)}</div>`).join("")}
+                            </div>
+                            <div class="comment-input-area">
+                                <input type="text" id="comment-input-${v.id}" placeholder="Tulis komentar...">
+                                <button onclick="addComment(${v.id})">Kirim</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+          })
+          .join("");
+
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((entry) => {
+              const vid = entry.target.querySelector("video");
+              if (vid) {
+                if (entry.isIntersecting) {
+                  vid.play().catch((e) => {});
+                  vid.muted = false;
+                } else {
+                  vid.pause();
+                  vid.muted = true;
+                }
+              }
+            });
+          },
+          { threshold: 0.6 },
+        );
+        document
+          .querySelectorAll(".video-container")
+          .forEach((c) => observer.observe(c));
+      }
+
+      function toggleLike(vidId) {
+        const session = getSession();
+        if (!session) return;
+        const video = globalVideos.find((v) => v.id === vidId);
+        if (video) {
+          if (!video.likes) video.likes = [];
+          const idx = video.likes.indexOf(session.nim);
+          if (idx === -1) video.likes.push(session.nim);
+          else video.likes.splice(idx, 1);
+          saveVideos(session.nim, globalVideos);
+          renderVideos();
+        }
+      }
+
+      function toggleComments(vidId) {
+        const panel = document.getElementById(`comments-panel-${vidId}`);
+        if (panel)
+          panel.style.display =
+            panel.style.display === "none" ? "block" : "none";
+      }
+
+      function addComment(vidId) {
+        const session = getSession();
+        if (!session) return;
+        const input = document.getElementById(`comment-input-${vidId}`);
+        const text = input.value.trim();
+        if (!text) return;
+        const video = globalVideos.find((v) => v.id === vidId);
+        if (video) {
+          if (!video.comments) video.comments = [];
+          video.comments.push({
+            name: session.name,
+            nim: session.nim,
+            text,
+            timestamp: Date.now(),
+          });
+          saveVideos(session.nim, globalVideos);
+          input.value = "";
+          renderVideos();
+          const panel = document.getElementById(`comments-panel-${vidId}`);
+          if (panel) panel.style.display = "block";
+          showNotif("Komentar terkirim!");
+        }
+      }
+
+      function deleteVideo(id) {
+        const session = getSession();
+        if (!session) return;
+        const video = globalVideos.find((v) => v.id === id);
+        if (
+          video &&
+          video.ownerNim === session.nim &&
+          confirm("Hapus video ini?")
+        ) {
+          const filtered = globalVideos.filter((v) => v.id !== id);
+          saveVideos(session.nim, filtered);
+          refreshUI();
+          showNotif("Video berhasil dihapus");
+        } else alert("Hanya pemilik video yang bisa menghapus!");
+      }
+
+      function setupVideoUpload() {
+        const area = document.getElementById("uploadVideoArea");
+        area.onclick = () => {
+          const inp = document.createElement("input");
+          inp.type = "file";
+          inp.accept = "video/*";
+          inp.onchange = (e) => {
+            if (e.target.files && e.target.files[0]) {
+              const file = e.target.files[0];
+              if (file.size > 50 * 1024 * 1024) {
+                showNotif("Video maksimal 50MB!", true);
+                return;
+              }
+              selectedVideoFile = file;
+              area.innerHTML = `<span>✅</span><p>Video: ${file.name.substring(0, 30)}</p><p>Klik ganti</p>`;
+              setupVideoUpload();
+              document.getElementById("videoUploadStatus").innerHTML =
+                "📹 Video siap diupload";
+            }
+          };
+          inp.click();
+        };
+      }
+
+      function uploadVideo() {
+        const session = getSession();
+        if (!session) return;
+        const title = document.getElementById("videoTitle").value.trim();
+        if (!selectedVideoFile)
+          return showNotif("Pilih video terlebih dahulu!", true);
+        if (!title) return showNotif("Masukkan judul video!", true);
+
+        const statusDiv = document.getElementById("videoUploadStatus");
+        statusDiv.innerHTML = "⏳ Mengupload video... mohon tunggu";
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const newVideo = {
+            id: Date.now(),
+            title: title,
+            videoBase64: e.target.result,
+            uploadDate: new Date().toLocaleString(),
+            ownerNim: session.nim,
+            ownerName: session.name,
+            likes: [],
+            comments: [],
+          };
+          const updated = [newVideo, ...getVideos(session.nim)];
+          saveVideos(session.nim, updated);
+          refreshUI();
+          selectedVideoFile = null;
+          document.getElementById("videoTitle").value = "";
+          document.getElementById("uploadVideoArea").innerHTML =
+            `<span>🎥</span><p>Klik pilih video (max 50MB)</p>`;
+          setupVideoUpload();
+          statusDiv.innerHTML = "✅ Video berhasil diupload!";
+          showNotif("🎬 Video berhasil diupload! Lihat di halaman Reels");
+          setTimeout(() => {
+            statusDiv.innerHTML = "";
+          }, 3000);
+          switchPage("video");
+        };
+        reader.onerror = () => {
+          statusDiv.innerHTML = "❌ Gagal membaca file";
+          showNotif("Gagal upload video!", true);
+        };
+        reader.readAsDataURL(selectedVideoFile);
+      }
+
+      // ==================== NAVIGASI & AUTH ====================
+      function switchPage(page) {
+        document.getElementById("pageProduk").classList.remove("active");
+        document.getElementById("pageVideo").classList.remove("active");
+        document.getElementById("pageAkun").classList.remove("active");
+        if (page === "produk") {
+          document.getElementById("pageProduk").classList.add("active");
+          filterProducts();
+        }
+        if (page === "video") {
+          document.getElementById("pageVideo").classList.add("active");
+          renderVideos();
+        }
+        if (page === "akun") {
+          document.getElementById("pageAkun").classList.add("active");
+          renderUserList();
+        }
+        document.querySelectorAll(".nav-item").forEach((btn, i) => {
+          btn.classList.remove("active");
+          if (
+            (page === "produk" && i === 0) ||
+            (page === "video" && i === 1) ||
+            (page === "akun" && i === 2)
+          )
+            btn.classList.add("active");
+        });
+      }
+
+      function logout() {
+        localStorage.removeItem("simarket_session");
+        location.reload();
+      }
+      function clearAllData() {
+        if (
+          confirm("⚠️ Hapus SEMUA data? Semua user, produk, video akan hilang.")
+        ) {
+          localStorage.clear();
+          location.reload();
+        }
+      }
+      function changePassword() {
+        const session = getSession();
+        if (!session) return;
+        const newPass = document.getElementById("newPassword").value;
+        const confirm = document.getElementById("confirmPassword").value;
+        if (newPass.length < 4)
+          return showNotif("Password minimal 4 karakter", true);
+        if (newPass !== confirm) return showNotif("Password tidak cocok", true);
+        const users = getUsers();
+        if (users[session.nim]) {
+          users[session.nim].password = newPass;
+          saveUsers(users);
+          showNotif("Password berhasil diubah!");
+        }
+        document.getElementById("newPassword").value = "";
+        document.getElementById("confirmPassword").value = "";
+      }
+
+      function doRegister() {
+        const nim = document.getElementById("nimInput").value.trim();
+        const pass = document.getElementById("passwordInput").value;
+        const name = document.getElementById("nameInput").value.trim();
+        if (nim.length !== 12 || !/^\d+$/.test(nim))
+          return showNotif("NIM harus 12 digit angka!", true);
+        if (pass.length < 4)
+          return showNotif("Password minimal 4 karakter!", true);
+        if (!name) return showNotif("Nama lengkap harus diisi!", true);
+        const users = getUsers();
+        if (users[nim]) return showNotif("NIM sudah terdaftar!", true);
+        users[nim] = {
+          password: pass,
+          name,
+          nim,
+          registeredAt: new Date().toLocaleString(),
+        };
+        saveUsers(users);
+        showNotif("Registrasi berhasil! Silakan login.");
+        setTimeout(() => {
+          if (!isLoginMode) toggleForm();
+        }, 1200);
+      }
+
+      function doLogin() {
+        const nim = document.getElementById("nimInput").value.trim();
+        const pass = document.getElementById("passwordInput").value;
+        if (nim.length !== 12 || !/^\d+$/.test(nim))
+          return showNotif("NIM harus 12 digit angka!", true);
+        const users = getUsers();
+        const user = users[nim];
+        if (!user) return showNotif("NIM belum terdaftar!", true);
+        if (user.password !== pass) return showNotif("Password salah!", true);
+        const session = {
+          nim: user.nim,
+          name: user.name,
+          role: "mahasiswa",
+          tahun: "20" + nim.substring(0, 2),
+        };
+        saveSession(session);
+        showMainApp(session);
+      }
+
+      function showMainApp(user) {
+        document.getElementById("loginOverlay").style.display = "none";
+        document.getElementById("mainApp").style.display = "block";
+        document.getElementById("profileNim").innerHTML = `NIM: ${user.nim}`;
+        document.getElementById("profileName").innerHTML = user.name;
+        document.getElementById("profileRole").innerHTML =
+          `<span class="role-badge">🎓 Angkatan ${user.tahun}</span>`;
+        loadAllData();
+        renderProducts();
+        renderVideos();
+        setupVideoUpload();
+        renderUserList();
+        const fu = document.querySelector(".variant-upload");
+        if (fu) setupVariantUpload(fu, 0);
+      }
+
+      function toggleForm() {
+        isLoginMode = !isLoginMode;
+        document.getElementById("formTitle").innerText = isLoginMode
+          ? "Login"
+          : "Register";
+        document.getElementById("actionBtn").innerText = isLoginMode
+          ? "Login"
+          : "Register";
+        document.getElementById("toggleText").innerText = isLoginMode
+          ? "Belum punya akun? Register"
+          : "Sudah punya akun? Login";
+        document.getElementById("nameInput").style.display = isLoginMode
+          ? "none"
+          : "block";
+        document.getElementById("loginError").style.display = "none";
+        document.getElementById("loginSuccess").style.display = "none";
+      }
+
+      function handleLoginRegister() {
+        isLoginMode ? doLogin() : doRegister();
+      }
+      function closeModal() {
+        document.getElementById("productModal").style.display = "none";
+        document.body.style.overflow = "auto";
+      }
+      function escapeHtml(str) {
+        if (!str) return "";
+        return str.replace(/[&<>]/g, (m) =>
+          m === "&" ? "&amp;" : m === "<" ? "&lt;" : "&gt;",
+        );
+      }
+      function formatRupiah(angka) {
+        return "Rp" + angka.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+
+      document.getElementById("actionBtn").onclick = handleLoginRegister;
+      document.getElementById("toggleText").onclick = toggleForm;
+      window.onclick = (e) => {
+        if (e.target === document.getElementById("productModal")) closeModal();
+      };
+
+      const existingSession = getSession();
+      if (existingSession) showMainApp(existingSession);
+      else {
+        document.getElementById("loginOverlay").style.display = "flex";
+        document.getElementById("mainApp").style.display = "none";
+      }
+    </script>
+  </body>
+</html>
